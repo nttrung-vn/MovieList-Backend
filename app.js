@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const moviesRouter = require("./app/routes/movie.route");
+const usersRouter = require("./app/routes/user.route");
 const ApiError = require("./app/api-error");
 
 const app = express();
@@ -8,6 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/api/movies", moviesRouter);
+app.use("/api/users", usersRouter);
 
 // handle 404 response
 app.use((req, res, next) => {
