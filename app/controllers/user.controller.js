@@ -82,6 +82,7 @@ exports.login = async (req, res, next) => {
     });
 
     return res.send({
+      role: updateUser.role,
       token: updateUser.token,
     });
   } catch (e) {
