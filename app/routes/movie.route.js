@@ -1,11 +1,12 @@
 const express = require("express");
 const movies = require("../controllers/movie.controller");
+const auth = require("../middleware/auth");
 
 const router = express.Router();
 
 router.route("/").get(movies.findAll).post(movies.create);
 
-router.route("/favorite").get(movies.findAllFavorite);
+router.route("/favorite").get(auth, movies.findAllFavorite);
 
 router
   .route("/:id")

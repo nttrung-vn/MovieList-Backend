@@ -10,6 +10,7 @@ class UserService {
       username: payload.username,
       password: payload.password,
       token: payload.token,
+      role: payload.role,
     };
     // Remove undefined fields
     Object.keys(user).forEach(
@@ -22,7 +23,7 @@ class UserService {
     const newUser = this.extractUserData(payload);
     const result = await this.User.findOneAndUpdate(
       newUser,
-      { $set: newUser },
+      { $set: newUser, $set: { role: (newUser.role = "member") } },
       { returnDocument: "after", upsert: true }
     );
     return result.value;

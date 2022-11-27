@@ -70,13 +70,14 @@ exports.login = async (req, res, next) => {
     }
 
     // Create token
-    const userId = user[0]._id.toString();
-    const token = jwt.sign({ userId: userId }, process.env.TOKEN_KEY, {
+    const id = user[0]._id.toString();
+    const role = user[0].role;
+    const token = jwt.sign({ id: id, role: role }, process.env.TOKEN_KEY, {
       expiresIn: "10h",
     });
 
     // Update user
-    const updateUser = await userService.update(userId, {
+    const updateUser = await userService.update(id, {
       token: token,
     });
 
