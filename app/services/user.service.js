@@ -23,7 +23,7 @@ class UserService {
     const newUser = this.extractUserData(payload);
     const result = await this.User.findOneAndUpdate(
       newUser,
-      { $set: newUser, $set: { role: (newUser.role = "member") } },
+      { $set: { role: (newUser.role = "member") } },
       { returnDocument: "after", upsert: true }
     );
     return result.value;
