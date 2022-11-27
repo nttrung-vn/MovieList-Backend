@@ -1,13 +1,11 @@
 const express = require("express");
 const cors = require("cors");
+const moviesRouter = require("./app/routes/movie.route");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to Movie List application." });
-});
+app.use("/api/movies", moviesRouter);
 
 module.exports = app;
