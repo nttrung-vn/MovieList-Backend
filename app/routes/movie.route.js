@@ -6,8 +6,6 @@ const router = express.Router();
 
 router.route("/").get(movies.findAll).post(movies.create);
 
-router.route("/favorite").get(auth, movies.findAllFavorite);
-
 router
   .route("/:id")
   .get(movies.findOne)

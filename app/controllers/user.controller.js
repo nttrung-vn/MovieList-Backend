@@ -90,3 +90,15 @@ exports.login = async (req, res, next) => {
     return next(new ApiError(500, "An error occurred while user login."));
   }
 };
+
+exports.findAllFavorite = (req, res) => {
+  res.send({ message: "findAllFavorite handler" });
+};
+
+exports.addFavorite = (req, res) => {
+  res.send({ message: "addFavorite handler" });
+};
+
+exports.removeFavorite = (req, res) => {
+  res.send({ message: "removeFavorite handler" });
+};
