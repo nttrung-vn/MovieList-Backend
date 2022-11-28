@@ -1,4 +1,5 @@
 const UserService = require("../services/user.service");
+const MovieService = require("../services/movie.service");
 const MongoDB = require("../utils/mongodb.util");
 const ApiError = require("../api-error");
 const bcrypt = require("bcrypt");
@@ -73,7 +74,7 @@ exports.login = async (req, res, next) => {
     const id = user[0]._id.toString();
     const role = user[0].role;
     const token = jwt.sign({ id: id, role: role }, process.env.TOKEN_KEY, {
-      expiresIn: "10h",
+      expiresIn: "24h",
     });
 
     // Update user
@@ -81,24 +82,79 @@ exports.login = async (req, res, next) => {
       token: token,
     });
 
-    return res.send({
-      role: updateUser.role,
-      token: updateUser.token,
-    });
+    return res.send(updateUser);
   } catch (e) {
     console.log(e);
     return next(new ApiError(500, "An error occurred while user login."));
   }
 };
 
-exports.findAllFavorite = (req, res) => {
-  res.send({ message: "findAllFavorite handler" });
+exports.findAllFavorite = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const userService = new UserService(MongoDB.client);
+    const userDocument = await userService.findFavorite(userId);
+
+    // const movieService = new MovieService(MongoDB.client);
+
+    // await userDocument.favorites.forEach(async (element) => {
+    //   document = await movieService.findById(element);
+    //   if (!document) {
+    //     await userService.removeFavorite(userId, element);
+    //   }
+    // });
+
+    // const updatedUser = await userService.findFavorite(userId);
+
+    return res.send(userDocument);
+  } catch (error) {
+    console.log(error);
+    return next(
+      new ApiError(500, "An error occurred while retrieving favorite movie.")
+    );
+  }
 };
 
-exports.addFavorite = (req, res) => {
-  res.send({ message: "addFavorite handler" });
+exports.addFavorite = async (req, res, next) => {
+  try {
+    const movieId = req.params.id;
+    const movieService = new MovieService(MongoDB.client);
+    const document = await movieService.findById(movieId);
+
+    if (!document) {
+      return next(new ApiError(404, "Movie not found"));
+    }
+
+    const userId = req.user.id;
+
+    const userService = new UserService(MongoDB.client);
+    const updatedUser = await userService.addFavorite(userId, movieId);
+
+    return res.send(updatedUser);
+  } catch (error) {
+    console.log(error);
+    return next(
+      new ApiError(500, `Error adding movie with id=${req.params.id} to user.`)
+    );
+  }
 };
 
-exports.removeFavorite = (req, res) => {
-  res.send({ message: "removeFavorite handler" });
+exports.removeFavorite = async (req, res, next) => {
+  try {
+    const movieId = req.params.id;
+    const userId = req.user.id;
+
+    const userService = new UserService(MongoDB.client);
+    const updatedUser = await userService.removeFavorite(userId, movieId);
+
+    return res.send(updatedUser);
+  } catch (error) {
+    console.log(error);
+    return next(
+      new ApiError(
+        500,
+        `Error removing movie with id=${req.params.id} on user.`
+      )
+    );
+  }
 };
